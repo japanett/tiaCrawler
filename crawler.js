@@ -13,8 +13,8 @@ var verifica = tia + "verifica.php" //Verifica credenciais
 var index2 = tia + "index2.php" //Index após logado
 var horarios = tia + "horarChamada.php" //horarios
 
-var alumat = "41427475";
-var pass = "123gabi";
+var alumat = "xxxxxx";
+var pass = "xxxxx";
 var unidade = "001";
 
 function searchForWord($, word) {
