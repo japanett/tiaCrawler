@@ -20,8 +20,6 @@ var frequencia = tia + 'faltasChamada.php';
 var alumat = 'xxxxx'; // TIA
 var pass = 'xxxxxx'; // password
 var unidade = '001';
-var globalToken;
-var globalCookie;
 
 // function searchForWord($, word) {
 //     var bodyText = $('html > body').text();
