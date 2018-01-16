@@ -15,27 +15,18 @@ const index = tia + 'index.php'; //Pagina de login do tia
 const verifica = tia + 'verifica.php'; // Post login
 const index2 = tia + 'index2.php'; //Index após logado
 const horarios = tia + 'horarChamada.php';
-const frequencia = tia + 'faltasChamada.php'; 
+const frequencia = tia + 'faltasChamada.php';
 
 var aluno = {
-    'matricula':'xxxx',
-    'password':'xxxx',
-    'unidade':'001',
-    'nome':'',
-    'curso':''
+    'matricula': '41427475',
+    'password': '123gabi',
+    'unidade': '001',
+    'nome': '',
+    'curso': ''
 }
 
-// function searchForWord($, word) {
-//     var bodyText = $('html > body').text();
-//     if (bodyText.toLowerCase().indexOf(word.toLowerCase()) !== -1) {
-//         return true;
-//     } else {
-//         return false;
-//     }
-// }
-
 // GET request at index.php to get the token
-console.log("Visiting page " + index);
+// console.log("Visiting page " + index);
 request({
     url: index,
     method: 'GET',
@@ -44,23 +35,21 @@ request({
     if (error) {
         console.log("Error: " + error);
     }
-    // Checking status
+
     console.log("1.Status code(index.php): " + response.statusCode);
     if (response.statusCode === 200) {
         // Parse the document body
         var $ = cheerio.load(body);
-        // Gets the token from the form 
+        // Getting the token from the form 
         var token = $('[name=token]').val();
-
         var payloadLogin = {
             'token': token,
             'alumat': aluno.matricula,
             'pass': aluno.password,
             'unidade': aluno.unidade
         };
-    
+
         var loginString = querystring.stringify(payloadLogin);
-        var length = loginString.length;
         var optionslogin = {
             method: 'POST',
             followAllRedirects: true,
@@ -73,34 +62,34 @@ request({
                 'Connection': 'keep-alive',
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:55.0) Gecko/20100101 Firefox/55.0',
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'Content-Length': length
+                'Content-Length': loginString.length
             },
         };
         // POST REQUEST AT verifica.php 
         request(optionslogin, function (error, response, body) {
-            // console.log(body);
-            // GET REQUEST DA PAGINA horarChamada.php
-            // console.log(body)  da pra pegar o nome e curso por aqui
-            
-            console.log("3.Visiting page " + horarios);
-            request({
-                url: horarios,
-                jar: jar,
-                method: 'GET'
-            }, function (error, response, body) {
-                if (error) {
-                    console.log("Error: " + error);
-                }
-                // Checking status
-                console.log("3.Status code(horarChamada.php): " + response.statusCode);
-                if (response.statusCode === 200) {
-                    // Parse the document body
-                    // console.log(body);
-                    var $ = cheerio.load(body);
-                    aluno.nome = $('h2').text().split('- ').pop();
-                    
-                }
-            });
+            var $ = cheerio.load(body);
+            var authenticate = $('[name=mensagem]').val();
+            if (typeof authenticate == 'undefined') { //authenticate is undefined when login is sucessfull
+                console.log("3.Visiting page " + horarios);
+                request({
+                    url: horarios,
+                    jar: jar,
+                    method: 'GET'
+                }, function (error, response, body) {
+                    if (error) {
+                        console.log("Error: " + error);
+                    }
+                    // Checking status
+                    if (response.statusCode === 200) {
+                        // console.log(body);
+                        var $ = cheerio.load(body);
+                        aluno.nome = $('h2').text().split('- ').pop();
+                        console.log('nome: ' + aluno.nome);
+                    }
+                });
+            } else {
+                console.log(authenticate);
+            }
 
             //GET REQUEST DA PAGINA faltasChamada.php
             // console.log("3.Visiting page " + frequencia);
