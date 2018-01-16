@@ -18,8 +18,8 @@ const horarios = tia + 'horarChamada.php';
 const frequencia = tia + 'faltasChamada.php';
 
 var aluno = {
-    'matricula': '41427475',
-    'password': '123gabi',
+    'matricula': 'xxxxxx',
+    'password': 'xxxxxx',
     'unidade': '001',
     'nome': '',
     'curso': ''
