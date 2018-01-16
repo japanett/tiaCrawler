@@ -10,16 +10,20 @@ var fs = require('fs');
 var querystring = require('querystring');
 var jar = request.jar();
 
-var tia = 'https://www3.mackenzie.br/tia/';
-var index = tia + 'index.php'; //Pagina de login do tia
-var verifica = tia + 'verifica.php'; // Post login
-var index2 = tia + 'index2.php'; //Index após logado
-var horarios = tia + 'horarChamada.php';
-var frequencia = tia + 'faltasChamada.php'; 
+const tia = 'https://www3.mackenzie.br/tia/';
+const index = tia + 'index.php'; //Pagina de login do tia
+const verifica = tia + 'verifica.php'; // Post login
+const index2 = tia + 'index2.php'; //Index após logado
+const horarios = tia + 'horarChamada.php';
+const frequencia = tia + 'faltasChamada.php'; 
 
-var alumat = 'xxxxx'; // TIA
-var pass = 'xxxxxx'; // password
-var unidade = '001';
+var aluno = {
+    'matricula':'xxxx',
+    'password':'xxxx',
+    'unidade':'001',
+    'nome':'',
+    'curso':''
+}
 
 // function searchForWord($, word) {
 //     var bodyText = $('html > body').text();
@@ -47,12 +51,14 @@ request({
         var $ = cheerio.load(body);
         // Gets the token from the form 
         var token = $('[name=token]').val();
+
         var payloadLogin = {
             'token': token,
-            'alumat': alumat,
-            'pass': pass,
-            'unidade': unidade
+            'alumat': aluno.matricula,
+            'pass': aluno.password,
+            'unidade': aluno.unidade
         };
+    
         var loginString = querystring.stringify(payloadLogin);
         var length = loginString.length;
         var optionslogin = {
@@ -74,6 +80,8 @@ request({
         request(optionslogin, function (error, response, body) {
             // console.log(body);
             // GET REQUEST DA PAGINA horarChamada.php
+            // console.log(body)  da pra pegar o nome e curso por aqui
+            
             console.log("3.Visiting page " + horarios);
             request({
                 url: horarios,
@@ -87,32 +95,29 @@ request({
                 console.log("3.Status code(horarChamada.php): " + response.statusCode);
                 if (response.statusCode === 200) {
                     // Parse the document body
-                    console.log(body);
-                    // var $ = cheerio.load(body);
+                    // console.log(body);
+                    var $ = cheerio.load(body);
+                    aluno.nome = $('h2').text().split('- ').pop();
+                    
                 }
             });
 
             //GET REQUEST DA PAGINA faltasChamada.php
-            console.log("3.Visiting page " + frequencia);
-            request({
-                url: frequencia,
-                jar: jar,
-                method: 'GET'
-            }, function (error, response, body) {
-                if (error) {
-                    console.log("Error: " + error);
-                }
-                // Checking status
-                console.log("3.Status code(faltasChamada.php): " + response.statusCode);
-                if (response.statusCode === 200) {
-                    // Parse the document body
-                    console.log(body);
-                    // var $ = cheerio.load(body);
-                }
-            });
+            // console.log("3.Visiting page " + frequencia);
+            // request({
+            //     url: frequencia,
+            //     jar: jar,
+            //     method: 'GET'
+            // }, function (error, response, body) {
+            //     if (error) {
+            //         console.log("Error: " + error);
+            //     }
+            //     console.log("3.Status code(faltasChamada.php): " + response.statusCode);
+            //     if (response.statusCode === 200) {
+            //         console.log(body);
+            //         var $ = cheerio.load(body);
+            //     }
+            // });
         });
     }
 });
-
-
-
